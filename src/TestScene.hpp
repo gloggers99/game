@@ -6,6 +6,7 @@
 #define GAME_TESTSCENE_HPP
 
 #include "Scene.hpp"
+#include "matrix/Camera.hpp"
 #include <cmath>
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
@@ -21,50 +22,19 @@ private:
     void handleInput() {
         if (glfwGetKey(this->window->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetInputMode(this->window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
         const float cameraSpeed = 2.5f * this->deltaTime; // adjust accordingly
+
         if (glfwGetKey(this->window->getWindow(), GLFW_KEY_W) == GLFW_PRESS)
-            cameraPos += cameraSpeed * cameraFront;
+            this->camera.move(Direction::FORWARD, cameraSpeed);
         if (glfwGetKey(this->window->getWindow(), GLFW_KEY_S) == GLFW_PRESS)
-            cameraPos -= cameraSpeed * cameraFront;
+            this->camera.move(Direction::BACKWARD, cameraSpeed);
         if (glfwGetKey(this->window->getWindow(), GLFW_KEY_A) == GLFW_PRESS)
-            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+            this->camera.move(Direction::LEFT, cameraSpeed);
         if (glfwGetKey(this->window->getWindow(), GLFW_KEY_D) == GLFW_PRESS)
-            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+            this->camera.move(Direction::RIGHT, cameraSpeed);
 
-        double xpos, ypos;
-        glfwGetCursorPos(this->window->getWindow(), &xpos, &ypos);
-        std::cout << xpos << " " << ypos << "\n";
-
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
-
-        float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-        lastX = xpos;
-        lastY = ypos;
-
-        float sensitivity = 0.1f; // change this value to your liking
-        xoffset *= sensitivity;
-        yoffset *= sensitivity;
-
-        yaw += xoffset;
-        pitch += yoffset;
-
-        // make sure that when pitch is out of bounds, screen doesn't get flipped
-        if (pitch > 89.0f)
-            pitch = 89.0f;
-        if (pitch < -89.0f)
-            pitch = -89.0f;
-
-        glm::vec3 front;
-        front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-        front.y = sin(glm::radians(pitch));
-        front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-        cameraFront = glm::normalize(front);
+        this->camera.handleMouse(this->window);
     }
 
     bool firstMouse = true;
@@ -74,12 +44,14 @@ private:
     float lastY =  600.0 / 2.0;
     float fov   =  90.0f;
 
-    float deltaTime = 0.0f;
-    float lastFrame = 0.0f;
+    ShaderProgram shaderProgram = ShaderProgram();
+    Camera camera = Camera();
 
-    glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
-    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+    VAO vao = VAO();
+    VBO vbo = VBO();
+    EBO ebo = EBO();
+
+    float deltaTime = 0.0f;
 protected:
     void init() override {
         std::string vertexSource = R"glsl(
@@ -115,10 +87,9 @@ protected:
         Shader fragmentShader = Shader(GL_FRAGMENT_SHADER, fragmentSource);
         fragmentShader.compileShader();
 
-        ShaderProgram shaderProgram = ShaderProgram();
-        shaderProgram.attachShader(vertexShader);
-        shaderProgram.attachShader(fragmentShader);
-        shaderProgram.link();
+        this->shaderProgram.attachShader(vertexShader);
+        this->shaderProgram.attachShader(fragmentShader);
+        this->shaderProgram.link();
 
         float vertices[] = {
                 // front
@@ -185,9 +156,6 @@ protected:
 
         };
 
-        VAO vao = VAO();
-        VBO vbo = VBO();
-        EBO ebo = EBO();
 
         vao.bind();
 
@@ -206,53 +174,31 @@ protected:
 
         glfwSetInputMode(this->window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-        while (!this->getGame()->getWindow()->shouldClose()) {
-            float currentFrame = static_cast<float>(glfwGetTime());
-            this->deltaTime = currentFrame - lastFrame;
-            lastFrame = currentFrame;
-
-            this->handleInput();
-
-            glClear(GL_COLOR_BUFFER_BIT);
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-            shaderProgram.use();
-
-            float time = glfwGetTime();
-            float greenValue = std::sin(time) + 0.5f;
-
-            shaderProgram.modifyUniform("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
-
-
-            glm::mat4 trans = glm::mat4(1.0f);
-            //trans = glm::rotate(trans, glm::radians(50.0f), glm::vec3(1.0, 1.0, 1.0));
-            //trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-
-            shaderProgram.modifyUniform("transform", trans);
-
-            /*
-            glm::mat4 view = glm::mat4(1.0f);
-            float radius = 10.0f;
-            float camX = static_cast<float>(sin(glfwGetTime()) * radius);
-            float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
-            view = glm::lookAt(glm::vec3(camX, 0.0f, camZ),
-                               glm::vec3(0.0f, 0.0f, 0.0f),
-                               glm::vec3(0.0f, 1.0f, 0.0f));
-            */
-            glm::mat4 view = glm::mat4(1.0f);
-            view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-            //cameraPos.y = 0.0f;
-            shaderProgram.modifyUniform("view", view);
-
-            glBindVertexArray(vao.getVAO());
-            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-            this->getGame()->getWindow()->swapBuffers();
-            glfwPollEvents();
-        }
     }
 
-    void loop() override {}
+    void loop(float deltaTime) override {
+        this->deltaTime = deltaTime;
+        this->handleInput();
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+        shaderProgram.use();
+
+        float time = glfwGetTime();
+        float greenValue = std::sin(time) + 0.5f;
+        shaderProgram.modifyUniform("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
+
+        glm::mat4 trans = glm::mat4(1.0f);
+        shaderProgram.modifyUniform("transform", trans);
+        shaderProgram.modifyUniform("view", camera.getMatrix());
+
+        glBindVertexArray(vao.getVAO());
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+        this->getGame()->getWindow()->swapBuffers();
+        glfwPollEvents();
+    }
+
 };
 
 #endif //GAME_TESTSCENE_HPP

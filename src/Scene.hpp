@@ -15,6 +15,8 @@
 
 class Game;
 
+// todo: add deltatime to loop parameters
+
 class Scene {
 private:
     bool run = true;
@@ -23,7 +25,7 @@ protected:
     Window *window{};
 
     virtual void init() = 0;
-    virtual void loop() = 0;
+    virtual void loop(float deltaTime) = 0;
     void end() {
         this->run = false;
     }

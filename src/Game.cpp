@@ -23,10 +23,13 @@ void Game::runScene(Scene *scene) {
     scene->setGame(this);
     scene->setWindow(this->window);
     scene->init();
+    float lastFrame = 0.0f;
     while (scene->run) {
         if (window->shouldClose())
             break;
-        scene->loop();
+        float currentFrame = static_cast<float>(glfwGetTime());
+        scene->loop(currentFrame - lastFrame);
+        lastFrame = currentFrame;
         glfwPollEvents();
     }
 }
