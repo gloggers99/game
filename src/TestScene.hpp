@@ -52,6 +52,7 @@ private:
     EBO ebo = EBO();
 
     float deltaTime = 0.0f;
+
 protected:
     void init() override {
         std::string vertexSource = R"glsl(
