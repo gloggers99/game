@@ -15,6 +15,7 @@ public:
     void swapBuffers();
     GLFWwindow *getWindow();
     bool shouldClose();
+    void close();
 
     Window(int width, int height, const std::string& title);
     ~Window();

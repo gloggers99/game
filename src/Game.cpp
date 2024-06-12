@@ -31,6 +31,7 @@ void Game::framebuffer_size_callback(GLFWwindow *window, int width, int height) 
 
 void Game::runScene(Scene *scene) {
     scene->setGame(this);
+    scene->setWindow(this->window);
     scene->run();
 }
 

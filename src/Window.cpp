@@ -21,6 +21,10 @@ bool Window::shouldClose() {
     return glfwWindowShouldClose(this->window);
 }
 
+void Window::close() {
+    glfwSetWindowShouldClose(this->window, true);
+}
+
 Window::Window(int width, int height, const std::string& title) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -32,3 +36,4 @@ Window::Window(int width, int height, const std::string& title) {
 Window::~Window() {
     glfwDestroyWindow(this->window);
 }
+

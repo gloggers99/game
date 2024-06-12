@@ -13,7 +13,28 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+// TODO:
+//  - setup deltatime, control more of the scene class using Game.cpp
+
 class TestScene : public Scene {
+private:
+    void handleInput() {
+        if (glfwGetKey(this->window->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            this->getGame()->getWindow()->close();
+        const float cameraSpeed = 0.05f; // adjust accordingly
+        if (glfwGetKey(this->window->getWindow(), GLFW_KEY_W) == GLFW_PRESS)
+            cameraPos += cameraSpeed * cameraFront;
+        if (glfwGetKey(this->window->getWindow(), GLFW_KEY_S) == GLFW_PRESS)
+            cameraPos -= cameraSpeed * cameraFront;
+        if (glfwGetKey(this->window->getWindow(), GLFW_KEY_A) == GLFW_PRESS)
+            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        if (glfwGetKey(this->window->getWindow(), GLFW_KEY_D) == GLFW_PRESS)
+            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    }
+
+    glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 public:
     void run() override {
         std::string vertexSource = R"glsl(
@@ -138,6 +159,8 @@ public:
         shaderProgram.modifyUniform("projection", projection);
 
         while (!this->getGame()->getWindow()->shouldClose()) {
+            this->handleInput();
+
             glClear(GL_COLOR_BUFFER_BIT);
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -148,12 +171,14 @@ public:
 
             shaderProgram.modifyUniform("ourColor", 0.0f, greenValue, 0.0f, 1.0f);
 
+
             glm::mat4 trans = glm::mat4(1.0f);
-            trans = glm::rotate(trans, glm::radians(50.0f), glm::vec3(1.0, 1.0, 1.0));
-            trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+            //trans = glm::rotate(trans, glm::radians(50.0f), glm::vec3(1.0, 1.0, 1.0));
+            //trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
             shaderProgram.modifyUniform("transform", trans);
 
+            /*
             glm::mat4 view = glm::mat4(1.0f);
             float radius = 10.0f;
             float camX = static_cast<float>(sin(glfwGetTime()) * radius);
@@ -161,7 +186,9 @@ public:
             view = glm::lookAt(glm::vec3(camX, 0.0f, camZ),
                                glm::vec3(0.0f, 0.0f, 0.0f),
                                glm::vec3(0.0f, 1.0f, 0.0f));
-
+            */
+            glm::mat4 view = glm::mat4(1.0f);
+            view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
             shaderProgram.modifyUniform("view", view);
 
             glBindVertexArray(vao.getVAO());

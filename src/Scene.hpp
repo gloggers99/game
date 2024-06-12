@@ -11,12 +11,14 @@
 #include "VAO.hpp"
 #include "VBO.hpp"
 #include "EBO.hpp"
+#include "Window.hpp"
 
 class Game;
 
 class Scene {
-private:
+protected:
     Game *game;
+    Window *window;
 public:
     virtual void run() = 0;
 
@@ -26,6 +28,14 @@ public:
 
     Game *getGame() {
         return this->game;
+    }
+
+    void setWindow(Window *window) {
+        this->window = window;
+    }
+
+    Window *getWindow() {
+        return this->window;
     }
 
     Scene() = default;
