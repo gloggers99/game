@@ -8,7 +8,8 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include "Window.hpp"
-#include "Scene.hpp"
+
+class Scene;
 
 class Game {
 private:
@@ -18,6 +19,7 @@ private:
     Window *window;
 public:
     void runScene(Scene *scene);
+    Window *getWindow();
 
     Game();
     ~Game();

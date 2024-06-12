@@ -7,6 +7,8 @@
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <vector>
+#include <glm/glm.hpp>
 
 #include "Shader.hpp"
 
@@ -14,6 +16,7 @@ class ShaderProgram {
 private:
     GLuint shaderProgram;
     bool linked;
+    std::vector<Shader> shaders;
 
 public:
     GLuint getShaderProgram();
@@ -21,6 +24,7 @@ public:
     void link();
     void use();
     void modifyUniform(const std::string &uniformName, float r, float g, float b, float a);
+    void modifyUniform(const std::string &uniformName, glm::mat4 mat4);
 
     ShaderProgram();
     ~ShaderProgram();
