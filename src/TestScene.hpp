@@ -241,6 +241,7 @@ public:
             */
             glm::mat4 view = glm::mat4(1.0f);
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+            cameraPos.y = 0.0f;
             shaderProgram.modifyUniform("view", view);
 
             glBindVertexArray(vao.getVAO());
