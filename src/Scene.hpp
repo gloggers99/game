@@ -16,16 +16,21 @@
 class Game;
 
 class Scene {
+private:
+    bool run = true;
 protected:
-    Game *game;
-    Window *window;
-public:
-    virtual void run() = 0;
+    Game *game{};
+    Window *window{};
+
+    virtual void init() = 0;
+    virtual void loop() = 0;
+    void end() {
+        this->run = false;
+    }
 
     void setGame(Game *game) {
         this->game = game;
     }
-
     Game *getGame() {
         return this->game;
     }
@@ -33,11 +38,10 @@ public:
     void setWindow(Window *window) {
         this->window = window;
     }
-
     Window *getWindow() {
         return this->window;
     }
-
+public:
     Scene() = default;
     ~Scene() = default;
 

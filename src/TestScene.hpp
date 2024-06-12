@@ -14,7 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // TODO:
-//  - setup deltatime, control more of the scene class using Game.cpp
+//  - control more of the scene class using Game.cpp
 
 class TestScene : public Scene {
 private:
@@ -72,7 +72,7 @@ private:
     float pitch =  0.0f;
     float lastX =  800.0f / 2.0;
     float lastY =  600.0 / 2.0;
-    [[maybe_unused]] float fov   =  90.0f;
+    float fov   =  90.0f;
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -80,8 +80,8 @@ private:
     glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
-public:
-    void run() override {
+protected:
+    void init() override {
         std::string vertexSource = R"glsl(
         #version 330 core
         layout (location = 0) in vec4 aPos;
@@ -241,7 +241,7 @@ public:
             */
             glm::mat4 view = glm::mat4(1.0f);
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-            cameraPos.y = 0.0f;
+            //cameraPos.y = 0.0f;
             shaderProgram.modifyUniform("view", view);
 
             glBindVertexArray(vao.getVAO());
@@ -251,6 +251,8 @@ public:
             glfwPollEvents();
         }
     }
+
+    void loop() override {}
 };
 
 #endif //GAME_TESTSCENE_HPP
