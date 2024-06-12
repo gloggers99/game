@@ -15,11 +15,11 @@
 
 #include "Scene.hpp"
 #include "Game.hpp"
-#include "Shader.hpp"
-#include "ShaderProgram.hpp"
-#include "VAO.hpp"
-#include "VBO.hpp"
-#include "EBO.hpp"
+#include "shaders/Shader.hpp"
+#include "shaders/ShaderProgram.hpp"
+#include "vo/VAO.hpp"
+#include "vo/VBO.hpp"
+#include "vo/EBO.hpp"
 
 void Game::error_callback(int error, const char *description) {
     std::cerr << "GLFW Error: " << description << "\n";

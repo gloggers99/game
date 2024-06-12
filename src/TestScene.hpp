@@ -20,8 +20,8 @@ class TestScene : public Scene {
 private:
     void handleInput() {
         if (glfwGetKey(this->window->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            this->getGame()->getWindow()->close();
-        const float cameraSpeed = 0.05f; // adjust accordingly
+            glfwSetInputMode(this->window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        const float cameraSpeed = 2.5f * this->deltaTime; // adjust accordingly
         if (glfwGetKey(this->window->getWindow(), GLFW_KEY_W) == GLFW_PRESS)
             cameraPos += cameraSpeed * cameraFront;
         if (glfwGetKey(this->window->getWindow(), GLFW_KEY_S) == GLFW_PRESS)
@@ -30,7 +30,52 @@ private:
             cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         if (glfwGetKey(this->window->getWindow(), GLFW_KEY_D) == GLFW_PRESS)
             cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
+        double xpos, ypos;
+        glfwGetCursorPos(this->window->getWindow(), &xpos, &ypos);
+        std::cout << xpos << " " << ypos << "\n";
+
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        lastX = xpos;
+        lastY = ypos;
+
+        float sensitivity = 0.1f; // change this value to your liking
+        xoffset *= sensitivity;
+        yoffset *= sensitivity;
+
+        yaw += xoffset;
+        pitch += yoffset;
+
+        // make sure that when pitch is out of bounds, screen doesn't get flipped
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
+
+        glm::vec3 front;
+        front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+        front.y = sin(glm::radians(pitch));
+        front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+        cameraFront = glm::normalize(front);
     }
+
+    bool firstMouse = true;
+    float yaw   = -90.0f;
+    float pitch =  0.0f;
+    float lastX =  800.0f / 2.0;
+    float lastY =  600.0 / 2.0;
+    [[maybe_unused]] float fov   =  90.0f;
+
+    float deltaTime = 0.0f;
+    float lastFrame = 0.0f;
 
     glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -106,6 +151,7 @@ public:
                 -0.5f, 0.5f, -0.5f, // bottom left
                 -0.5f, 0.5f, 0.5f, // top left
 
+                // bottom
                 0.5f, -0.5f, 0.5f, // top right
                 0.5f, -0.5f, -0.5f, // bottom right
                 -0.5f, -0.5f, -0.5f, // bottom left
@@ -158,7 +204,13 @@ public:
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) 640 / (float) 480, 0.1f, 100.0f);
         shaderProgram.modifyUniform("projection", projection);
 
+        glfwSetInputMode(this->window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
         while (!this->getGame()->getWindow()->shouldClose()) {
+            float currentFrame = static_cast<float>(glfwGetTime());
+            this->deltaTime = currentFrame - lastFrame;
+            lastFrame = currentFrame;
+
             this->handleInput();
 
             glClear(GL_COLOR_BUFFER_BIT);

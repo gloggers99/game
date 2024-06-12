@@ -10,16 +10,16 @@ add_executable(game src/main.cpp
         src/Window.cpp
         src/Window.hpp
         src/gl.c
-        src/Shader.cpp
-        src/Shader.hpp
-        src/VBO.cpp
-        src/VBO.hpp
-        src/VAO.cpp
-        src/VAO.hpp
-        src/ShaderProgram.cpp
-        src/ShaderProgram.hpp
-        src/EBO.cpp
-        src/EBO.hpp
+        src/shaders/Shader.cpp
+        src/shaders/Shader.hpp
+        src/vo/VBO.cpp
+        src/vo/VBO.hpp
+        src/vo/VAO.cpp
+        src/vo/VAO.hpp
+        src/shaders/ShaderProgram.cpp
+        src/shaders/ShaderProgram.hpp
+        src/vo/EBO.cpp
+        src/vo/EBO.hpp
         src/Scene.hpp
         src/TestScene.hpp
         src/TestScene.hpp)

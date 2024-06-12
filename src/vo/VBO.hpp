@@ -5,7 +5,7 @@
 #ifndef GAME_VBO_HPP
 #define GAME_VBO_HPP
 
-#include <glad/gl.h>
+#include "glad/gl.h"
 #include <GLFW/glfw3.h>
 
 #include "VAO.hpp"

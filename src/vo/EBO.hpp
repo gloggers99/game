@@ -5,7 +5,7 @@
 #ifndef GAME_EBO_HPP
 #define GAME_EBO_HPP
 
-#include <glad/gl.h>
+#include "glad/gl.h"
 #include <GLFW/glfw3.h>
 
 class EBO {
