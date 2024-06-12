@@ -2,24 +2,14 @@
 // Created by lucas on 6/10/24.
 //
 
-#include <cmath>
 #include <stdexcept>
 #include <iostream>
-#include <cmath>
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "Scene.hpp"
 #include "Game.hpp"
-#include "shaders/Shader.hpp"
-#include "shaders/ShaderProgram.hpp"
-#include "vo/VAO.hpp"
-#include "vo/VBO.hpp"
-#include "vo/EBO.hpp"
 
 void Game::error_callback(int error, const char *description) {
     std::cerr << "GLFW Error: " << description << "\n";
