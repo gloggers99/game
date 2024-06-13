@@ -22,8 +22,7 @@ add_executable(game src/main.cpp
         src/vo/EBO.hpp
         src/Scene.hpp
         src/TestScene.hpp
-        src/TestScene.hpp
-        src/TestScene2.hpp
         src/matrix/Camera.cpp
-        src/matrix/Camera.hpp)
+        src/matrix/Camera.hpp
+)
 target_link_libraries(game glfw)

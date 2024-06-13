@@ -29,7 +29,11 @@ private:
     float lastY =  600.0 / 2.0;
     float fov   =  90.0f;
 public:
-    glm::mat4 getMatrix();
+    /* for the cameras position and rotation */
+    glm::mat4 createViewMatrix();
+    /* for the cameras viewport */
+    glm::mat4 createProjectionMatrix(Window *window);
+
     void move(Direction direction = Direction::FORWARD, float speed = 2.5f);
     void handleMouse(Window *window);
 

@@ -2,16 +2,22 @@
 // Created by lucas on 6/12/24.
 //
 
-#include <glm/ext/matrix_transform.hpp>
-
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 #include "Camera.hpp"
 
-glm::mat4 Camera::getMatrix() {
+glm::mat4 Camera::createViewMatrix() {
     return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+}
+
+glm::mat4 Camera::createProjectionMatrix(Window *window) {
+    GLint width, height;
+    glfwGetWindowSize(window->getWindow(), &width, &height);
+    return glm::perspective(glm::radians(this->fov), (float) width / (float) height, 0.1f, 100.0f);
 }
 
 void Camera::move(Direction direction, float speed) {

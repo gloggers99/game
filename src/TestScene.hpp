@@ -170,14 +170,15 @@ protected:
         vao.unbind();
 
         shaderProgram.use();
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) 640 / (float) 480, 0.1f, 100.0f);
-        shaderProgram.modifyUniform("projection", projection);
+
 
         glfwSetInputMode(this->window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     }
 
     void loop(float deltaTime) override {
+        //glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) 640 / (float) 480, 0.1f, 100.0f);
+
         this->deltaTime = deltaTime;
         this->handleInput();
         glClear(GL_COLOR_BUFFER_BIT);
@@ -191,7 +192,8 @@ protected:
 
         glm::mat4 trans = glm::mat4(1.0f);
         shaderProgram.modifyUniform("transform", trans);
-        shaderProgram.modifyUniform("view", camera.getMatrix());
+        shaderProgram.modifyUniform("projection", this->camera.createProjectionMatrix(this->window));
+        shaderProgram.modifyUniform("view", camera.createViewMatrix());
 
         glBindVertexArray(vao.getVAO());
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
