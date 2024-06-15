@@ -25,6 +25,14 @@ void Window::close() {
     glfwSetWindowShouldClose(this->window, true);
 }
 
+void Window::hideCursor() {
+    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::showCursor() {
+    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
 Window::Window(int width, int height, const std::string& title) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);

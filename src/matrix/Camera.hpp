@@ -34,6 +34,9 @@ public:
     /* for the cameras viewport */
     glm::mat4 createProjectionMatrix(Window *window);
 
+    /* both of the previous functions combined*/
+    //glm::mat4 createCameraMatrix(Window *window);
+
     void move(Direction direction = Direction::FORWARD, float speed = 2.5f);
     void handleMouse(Window *window);
 

@@ -20,6 +20,12 @@ glm::mat4 Camera::createProjectionMatrix(Window *window) {
     return glm::perspective(glm::radians(this->fov), (float) width / (float) height, 0.1f, 100.0f);
 }
 
+/*
+glm::mat4 Camera::createCameraMatrix(Window *window) {
+    return (this->createViewMatrix() * this->createProjectionMatrix(window));
+}
+*/
+
 void Camera::move(Direction direction, float speed) {
     switch (direction) {
         case Direction::FORWARD:
@@ -42,7 +48,6 @@ void Camera::move(Direction direction, float speed) {
 void Camera::handleMouse(Window *window) {
     double xpos, ypos;
     glfwGetCursorPos(window->getWindow(), &xpos, &ypos);
-    std::cout << xpos << " " << ypos << "\n";
 
     if (firstMouse)
     {

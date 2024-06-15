@@ -16,6 +16,8 @@ public:
     GLFWwindow *getWindow();
     bool shouldClose();
     void close();
+    void hideCursor();
+    void showCursor();
 
     Window(int width, int height, const std::string& title);
     ~Window();

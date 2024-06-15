@@ -37,13 +37,6 @@ private:
         this->camera.handleMouse(this->window);
     }
 
-    bool firstMouse = true;
-    float yaw   = -90.0f;
-    float pitch =  0.0f;
-    float lastX =  800.0f / 2.0;
-    float lastY =  600.0 / 2.0;
-    float fov   =  90.0f;
-
     ShaderProgram shaderProgram = ShaderProgram();
     Camera camera = Camera();
 
@@ -60,8 +53,8 @@ protected:
         layout (location = 0) in vec4 aPos;
 
         uniform mat4 transform;
-        uniform mat4 view;
         uniform mat4 projection;
+        uniform mat4 view;
 
         void main()
         {
@@ -171,14 +164,10 @@ protected:
 
         shaderProgram.use();
 
-
-        glfwSetInputMode(this->window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+        this->window->hideCursor();
     }
 
     void loop(float deltaTime) override {
-        //glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) 640 / (float) 480, 0.1f, 100.0f);
-
         this->deltaTime = deltaTime;
         this->handleInput();
         glClear(GL_COLOR_BUFFER_BIT);
@@ -195,8 +184,19 @@ protected:
         shaderProgram.modifyUniform("projection", this->camera.createProjectionMatrix(this->window));
         shaderProgram.modifyUniform("view", camera.createViewMatrix());
 
-        glBindVertexArray(vao.getVAO());
+        vao.bind();
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+        shaderProgram.modifyUniform("transform", glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+        //shaderProgram.modifyUniform("transform", glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+        shaderProgram.modifyUniform(
+                "transform",
+                glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 0.1f, 10.0f))
+                );
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        vao.unbind();
 
         this->getGame()->getWindow()->swapBuffers();
         glfwPollEvents();
