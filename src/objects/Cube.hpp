@@ -29,6 +29,7 @@ public:
     void draw();
 
     void translate(glm::vec3 translation);
+    void scale(glm::vec3 scale);
 
     Cube(ShaderProgram &shaderProgram);
     ~Cube();

@@ -55,7 +55,7 @@ class TestScene : public Scene {
         #version 330 core
         layout (location = 0) in vec4 aPos;
 
-        uniform mat4 transform;
+        uniform mat4 transform = mat4(1.0f);
         uniform mat4 view;
         uniform mat4 projection;
 
@@ -88,6 +88,7 @@ class TestScene : public Scene {
 
             this->cube = new Cube(this->shaderProgram);
             this->cube->translate(glm::vec3(0.0f, 1.0f, 0.0f));
+            this->cube->scale(glm::vec3(0.5f, 0.5f, 0.5f));
             this->cube2 = new Cube(this->shaderProgram);
             this->cube2->translate(glm::vec3(0.0f, -1.0f, 0.0f));
 
@@ -102,11 +103,11 @@ class TestScene : public Scene {
 
             shaderProgram.use();
 
-            shaderProgram.modifyUniform("transform", glm::mat4(1.0f));
             shaderProgram.modifyUniform("projection", this->camera.createProjectionMatrix(this->window));
             shaderProgram.modifyUniform("view", camera.createViewMatrix());
 
 
+            this->cube->translate(glm::vec3(0.0f, -0.05f, 0.0f));
             this->cube->draw();
             this->cube2->draw();
 

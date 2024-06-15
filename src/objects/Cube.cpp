@@ -7,11 +7,16 @@ void Cube::draw() {
     this->shaderProgram.use();
     this->shaderProgram.modifyUniform("transform", this->transform);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    this->shaderProgram.modifyUniform("transform", glm::mat4(1.0f));
     this->vao.unbind();
 }
 
 void Cube::translate(glm::vec3 translation) {
     this->transform = glm::translate(this->transform, translation);
+}
+
+void Cube::scale(glm::vec3 scale) {
+    this->transform = glm::scale(this->transform, scale);
 }
 
 Cube::Cube(ShaderProgram &shaderProgram) 
