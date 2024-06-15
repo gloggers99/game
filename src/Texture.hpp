@@ -1,0 +1,19 @@
+#ifndef GAME_TEXTURE_HPP
+#define GAME_TEXTURE_HPP
+
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
+#include <string>
+
+class Texture {
+private:
+    GLuint texture;
+
+public:
+    GLuint getTexture();
+
+    Texture(std::string texturePath);
+    ~Texture();
+};
+
+#endif //GAME_TEXTURE_HPP

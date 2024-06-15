@@ -20,8 +20,9 @@ void VBO::setBufferData(float *data, size_t size) {
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
-void VBO::setAttribPointer(GLint index, GLint size) {
-    glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, size * sizeof(float), (void*)0);
+/* FIXME */ 
+void VBO::setAttribPointer(GLint index, GLint size, int stride, int offset) {
+    glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride, (void*)(offset * sizeof(float)));
     glEnableVertexAttribArray(index);
 }
 

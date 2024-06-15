@@ -6,17 +6,16 @@
 #define GAME_TESTSCENE_HPP
 
 #include "Scene.hpp"
+#include "Texture.hpp"
 #include "matrix/Camera.hpp"
-#include "objects/Cube.hpp"
+#include "shaders/Shader.hpp"
+#include <GL/gl.h>
 #include <cmath>
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-// TODO:
-//  - control more of the scene class using Game.cpp
 
 class TestScene : public Scene {
     private:
@@ -41,16 +40,21 @@ class TestScene : public Scene {
         ShaderProgram shaderProgram = ShaderProgram();
         Camera camera = Camera();
 
-        Cube *cube;
-        Cube *cube2;
-
         float deltaTime = 0.0f;
+
+        VAO vao;
+        VBO vbo;
+
+        Texture texture = Texture("img/wall.jpg");
 
     protected:
         void init() override {
             std::string vertexSource = R"glsl(
         #version 330 core
         layout (location = 0) in vec4 aPos;
+        layout (location = 1) in vec2 aTexCoord;
+
+        out vec2 TexCoord;
 
         uniform mat4 transform = mat4(1.0f);
         uniform mat4 view;
@@ -59,6 +63,7 @@ class TestScene : public Scene {
         void main()
         {
             gl_Position = projection * view * transform * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
+            TexCoord = aTexCoord;
             //gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);
         }
         )glsl";
@@ -69,10 +74,15 @@ class TestScene : public Scene {
             std::string fragmentSource = R"glsl(
         #version 330 core
         out vec4 FragColor;
+        
+        in vec2 TexCoord;
+
+        uniform sampler2D ourTexture;
 
         void main()
         {
-            FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+            //FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+            FragColor = texture(ourTexture, TexCoord);
         }
         )glsl";
 
@@ -83,11 +93,19 @@ class TestScene : public Scene {
             this->shaderProgram.attachShader(fragmentShader);
             this->shaderProgram.link();
 
-            this->cube = new Cube(this->shaderProgram);
-            this->cube->translate(glm::vec3(0.0f, 1.0f, 0.0f));
-            this->cube->scale(glm::vec3(0.5f, 0.5f, 0.5f));
-            this->cube2 = new Cube(this->shaderProgram);
-            this->cube2->translate(glm::vec3(0.0f, -1.0f, 0.0f));
+            float vertices[] = {
+                 0.5f, -0.5f, 0.0f,     0.5f, -0.5f, // bottom right
+                -0.5f, -0.5f, 0.0f,    -0.5f, -0.5f, // bottom left
+                 0.0f,  0.5f, 0.0f,     0.0f,  0.5f  // top
+            };
+
+            this->vao.bind();
+            this->vbo.bind();
+            this->vbo.setBufferData(vertices, sizeof(vertices));
+            this->vbo.setAttribPointer(0, 3, 5 * sizeof(float), 0);
+            this->vbo.setAttribPointer(1, 2, 5 * sizeof(float), 3);
+            this->vbo.unbind();
+            this->vao.unbind();
 
             this->window->hideCursor();
         }
@@ -103,10 +121,10 @@ class TestScene : public Scene {
             shaderProgram.modifyUniform("projection", this->camera.createProjectionMatrix(this->window));
             shaderProgram.modifyUniform("view", camera.createViewMatrix());
 
-
-            this->cube->translate(glm::vec3(0.0f, -0.05f, 0.0f));
-            this->cube->draw();
-            this->cube2->draw();
+            glBindTexture(GL_TEXTURE_2D, this->texture.getTexture());
+            this->vao.bind();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            this->vao.unbind();
 
             this->window->swapBuffers();
             glfwPollEvents();
