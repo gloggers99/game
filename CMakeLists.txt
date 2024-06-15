@@ -25,5 +25,7 @@ add_executable(game src/main.cpp
         src/TestScene.hpp
         src/matrix/Camera.cpp
         src/matrix/Camera.hpp
+        src/objects/Cube.cpp
+        src/objects/Cube.hpp
 )
 target_link_libraries(game glfw)
