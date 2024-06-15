@@ -8,9 +8,6 @@
 #include "Scene.hpp"
 #include "matrix/Camera.hpp"
 #include "objects/Cube.hpp"
-#include "vo/EBO.hpp"
-#include "vo/VAO.hpp"
-#include "vo/VBO.hpp"
 #include <cmath>
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>

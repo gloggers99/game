@@ -1,4 +1,12 @@
-# <p style="text-align: center;">Game: OpenGL based 3D game framework</p>
+# Game: OpenGL based 3D game framework
+
+<!--toc:start-->
+- [Game: OpenGL based 3D game framework](#game-opengl-based-3d-game-framework)
+  - [Why?](#why)
+  - [Getting Started](#getting-started)
+    - [The Approach](#the-approach)
+    - [Writing your first scene](#writing-your-first-scene)
+<!--toc:end-->
 
 ## Why?
 
@@ -11,14 +19,14 @@ commission and infamous start screens (Unity),
 so it made perfect sense to start an attempt to create a 
 3D game "framework", without any bogus features or advertising built in.
 
-## Getting Started:
+## Getting Started
 
-### The Approach:
+### The Approach
 Similar to XNA/MonoGame, you are going to create your games COMPLETELY with code.
 This means no fancy designer editor program like unity, no previewing, just straight
 declarative consistant code.
 
-### Writing your first scene:
+### Writing your first scene
 Let's begin by creating a Scene. Create a class with the name of your choice, 
 I will be using `TestScene.hpp`, This is not a C++ tutorial, so basic knowledge 
 of C++ will be needed.
@@ -77,4 +85,5 @@ protected:
 
 Rendering using opengl is out of the scope of this tutorial, the goal is to abstract
 most of opengl's functionality into classes throughout Game, however im still working
-at it bit by bit.
+at it bit by bit. However a glfw and opengl environment is provided for you to work with,
+and advanced users can utilize the full opengl toolset with a simplified Scene like structure.
