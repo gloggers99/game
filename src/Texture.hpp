@@ -8,6 +8,7 @@
 class Texture {
 private:
     GLuint texture;
+    unsigned char *data;
 
 public:
     GLuint getTexture();

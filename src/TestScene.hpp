@@ -8,6 +8,7 @@
 #include "Scene.hpp"
 #include "Texture.hpp"
 #include "matrix/Camera.hpp"
+#include "objects/Cube.hpp"
 #include "shaders/Shader.hpp"
 #include <GL/gl.h>
 #include <cmath>
@@ -44,6 +45,8 @@ class TestScene : public Scene {
 
         VAO vao;
         VBO vbo;
+
+        Cube *cube;
 
         Texture texture = Texture("img/wall.jpg");
 
@@ -107,6 +110,8 @@ class TestScene : public Scene {
             this->vbo.unbind();
             this->vao.unbind();
 
+            this->cube = new Cube(this->shaderProgram);
+
             this->window->hideCursor();
         }
 
@@ -125,6 +130,8 @@ class TestScene : public Scene {
             this->vao.bind();
             glDrawArrays(GL_TRIANGLES, 0, 3);
             this->vao.unbind();
+
+            this->cube->draw();
 
             this->window->swapBuffers();
             glfwPollEvents();

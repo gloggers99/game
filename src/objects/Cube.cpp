@@ -99,8 +99,7 @@ Cube::Cube(ShaderProgram &shaderProgram)
 
         this->ebo.bind();
         this->ebo.setBufferData(cubeIndices, sizeof(cubeIndices));
-        // TODO FIX
-        //this->vbo.setAttribPointer(0, 3);
+        this->vbo.setAttribPointer(0, 3,  3 * sizeof(float), 0);
 
         this->vao.unbind();
     }
