@@ -1,7 +1,7 @@
 #include "Game.hpp"
 #include "TestScene.hpp"
 
-// TODO: make texture filtering configurable
+// TODO: make texture filtering configurabl
 
 int main() {
     Game game = Game();

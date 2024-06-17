@@ -8,6 +8,7 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include "Window.hpp"
+#include "shaders/ShaderProgram.hpp"
 
 class Scene;
 
@@ -17,6 +18,7 @@ private:
     static void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
     Window *window;
+    ShaderProgram *defaultShaderProgram;
 public:
     void runScene(Scene *scene);
     Window *getWindow();

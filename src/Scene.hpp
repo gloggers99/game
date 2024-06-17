@@ -5,13 +5,8 @@
 #ifndef GAME_SCENE_HPP
 #define GAME_SCENE_HPP
 
-#include "Scene.hpp"
-#include "shaders/Shader.hpp"
-#include "shaders/ShaderProgram.hpp"
-#include "vo/VAO.hpp"
-#include "vo/VBO.hpp"
-#include "vo/EBO.hpp"
 #include "Window.hpp"
+#include "shaders/ShaderProgram.hpp"
 
 class Game;
 
@@ -23,6 +18,7 @@ private:
 protected:
     Game *game{};
     Window *window{};
+    ShaderProgram *defaultShaderProgram{};
 
     virtual void init() = 0;
     virtual void loop(float deltaTime) = 0;
@@ -42,6 +38,13 @@ protected:
     }
     Window *getWindow() {
         return this->window;
+    }
+
+    void setDefaultShaderProgram(ShaderProgram *shaderProgram) {
+        this->defaultShaderProgram = shaderProgram;
+    }
+    ShaderProgram *getDefaultShaderProgram() {
+        return this->defaultShaderProgram;
     }
 public:
     Scene() = default;

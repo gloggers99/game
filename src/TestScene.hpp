@@ -9,7 +9,6 @@
 #include "Texture.hpp"
 #include "matrix/Camera.hpp"
 #include "objects/Cube.hpp"
-#include "shaders/Shader.hpp"
 #include <GL/gl.h>
 #include <cmath>
 #include <glm/vec3.hpp>
@@ -38,13 +37,9 @@ class TestScene : public Scene {
             this->camera.handleMouse(this->window);
         }
 
-        ShaderProgram shaderProgram = ShaderProgram();
         Camera camera = Camera();
 
         float deltaTime = 0.0f;
-
-        VAO vao;
-        VBO vbo;
 
         Cube *cube;
 
@@ -52,67 +47,7 @@ class TestScene : public Scene {
 
     protected:
         void init() override {
-            std::string vertexSource = R"glsl(
-        #version 330 core
-        layout (location = 0) in vec4 aPos;
-        layout (location = 1) in vec2 aTexCoord;
-
-        out vec2 TexCoord;
-
-        uniform mat4 transform = mat4(1.0f);
-        uniform mat4 view;
-        uniform mat4 projection;
-
-        void main()
-        {
-            gl_Position = projection * view * transform * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
-            TexCoord = aTexCoord;
-            //gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);
-        }
-        )glsl";
-
-            Shader vertexShader = Shader(GL_VERTEX_SHADER, vertexSource);
-            vertexShader.compileShader();
-
-            std::string fragmentSource = R"glsl(
-        #version 330 core
-        out vec4 FragColor;
-        
-        in vec2 TexCoord;
-
-        uniform sampler2D ourTexture;
-
-        void main()
-        {
-            //FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-            FragColor = texture(ourTexture, TexCoord);
-        }
-        )glsl";
-
-            Shader fragmentShader = Shader(GL_FRAGMENT_SHADER, fragmentSource);
-            fragmentShader.compileShader();
-
-            this->shaderProgram.attachShader(vertexShader);
-            this->shaderProgram.attachShader(fragmentShader);
-            this->shaderProgram.link();
-
-            float vertices[] = {
-                 0.5f, -0.5f, 0.0f,     0.5f, -0.5f, // bottom right
-                -0.5f, -0.5f, 0.0f,    -0.5f, -0.5f, // bottom left
-                 0.0f,  0.5f, 0.0f,     0.0f,  0.5f  // top
-            };
-
-            this->vao.bind();
-            this->vbo.bind();
-            this->vbo.setBufferData(vertices, sizeof(vertices));
-            this->vbo.setAttribPointer(0, 3, 5 * sizeof(float), 0);
-            this->vbo.setAttribPointer(1, 2, 5 * sizeof(float), 3);
-            this->vbo.unbind();
-            this->vao.unbind();
-
-            this->cube = new Cube(this->shaderProgram);
-            this->cube->translate(glm::vec3(0.0f, 1.0f, 0.0f));
-            this->cube->setTexture({{new Texture("img/wall.jpg"), FRONTFACE}});
+            this->cube = new Cube(*this->defaultShaderProgram);
 
             this->window->hideCursor();
         }
@@ -123,15 +58,10 @@ class TestScene : public Scene {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            shaderProgram.use();
+            this->defaultShaderProgram->use();
 
-            shaderProgram.modifyUniform("projection", this->camera.createProjectionMatrix(this->window));
-            shaderProgram.modifyUniform("view", camera.createViewMatrix());
-
-            glBindTexture(GL_TEXTURE_2D, this->texture.getTexture());
-            this->vao.bind();
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-            this->vao.unbind();
+            this->defaultShaderProgram->modifyUniform("projection", this->camera.createProjectionMatrix(this->window));
+            this->defaultShaderProgram->modifyUniform("view", camera.createViewMatrix());
 
             this->cube->draw();
 

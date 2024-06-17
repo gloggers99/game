@@ -29,5 +29,7 @@ add_executable(game src/main.cpp
         src/objects/Cube.hpp
         src/Texture.cpp
         src/Texture.hpp
+        src/shaders/ShaderFactory.cpp
+        src/shaders/ShaderFactory.hpp
 )
 target_link_libraries(game glfw)

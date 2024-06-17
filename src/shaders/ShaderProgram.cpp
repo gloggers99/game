@@ -5,6 +5,7 @@
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 #include "ShaderProgram.hpp"
+#include "ShaderFactory.hpp"
 
 GLuint ShaderProgram::getShaderProgram() {
     return this->shaderProgram;
