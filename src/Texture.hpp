@@ -12,6 +12,7 @@ private:
 
 public:
     GLuint getTexture();
+    void bind();
 
     Texture(std::string texturePath);
     ~Texture();

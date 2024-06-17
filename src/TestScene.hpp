@@ -48,7 +48,7 @@ class TestScene : public Scene {
 
         Cube *cube;
 
-        Texture texture = Texture("img/wall.jpg");
+        Texture texture = Texture("img/missing.jpeg");
 
     protected:
         void init() override {

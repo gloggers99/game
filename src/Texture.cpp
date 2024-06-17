@@ -12,6 +12,10 @@ GLuint Texture::getTexture() {
     return this->texture;
 }
 
+void Texture::bind() {
+    glBindTexture(GL_TEXTURE_2D, this->texture);
+}
+
 Texture::Texture(std::string texturePath) {
     if (!std::filesystem::exists(texturePath))
         throw std::runtime_error("texture file: \'" + texturePath + "\' doesn't exist");

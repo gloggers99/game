@@ -1,13 +1,56 @@
 #include "Cube.hpp"
+#include <GL/gl.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
 
 void Cube::draw() {
     this->vao.bind();
     this->shaderProgram.use();
+
+    // draw front
+    this->frontTexture->bind();
     this->shaderProgram.modifyUniform("transform", this->transform);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     this->shaderProgram.modifyUniform("transform", glm::mat4(1.0f));
+    
+    // draw back
+    this->backTexture->bind();
+    this->shaderProgram.modifyUniform("transform", this->transform * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    this->shaderProgram.modifyUniform("transform", glm::mat4(1.0f));
+
+    // draw left
+    this->leftTexture->bind();
+    this->shaderProgram.modifyUniform("transform", 
+            this->transform 
+            * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    this->shaderProgram.modifyUniform("transform", glm::mat4(1.0f));
+
+    // draw right
+    this->rightTexture->bind();
+    this->shaderProgram.modifyUniform("transform", 
+            this->transform 
+            * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    this->shaderProgram.modifyUniform("transform", glm::mat4(1.0f));
+
+    // draw top
+    this->topTexture->bind();
+    this->shaderProgram.modifyUniform("transform", 
+            this->transform 
+            * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    this->shaderProgram.modifyUniform("transform", glm::mat4(1.0f));
+
+    // draw bottom
+    this->bottomTexture->bind();
+    this->shaderProgram.modifyUniform("transform", 
+            this->transform 
+            * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f)));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    this->shaderProgram.modifyUniform("transform", glm::mat4(1.0f));
+
     this->vao.unbind();
 }
 
@@ -21,83 +64,38 @@ void Cube::scale(glm::vec3 scale) {
 
 Cube::Cube(ShaderProgram &shaderProgram) 
     : shaderProgram(shaderProgram),
+    topTexture(new Texture("img/missing.jpeg")),
+    bottomTexture(new Texture("img/missing.jpeg")),
+    frontTexture(new Texture("img/missing.jpeg")),
+    backTexture(new Texture("img/missing.jpeg")),
+    leftTexture(new Texture("img/missing.jpeg")),
+    rightTexture(new Texture("img/missing.jpeg")),
     vao(VAO()),
     vbo(VBO()), 
     ebo(EBO()) {
-        // deal with the gpu objects
+        // INFO: this MIGHT be the wrong approach, however instead of
+        //       putting every vertice in one array, we can use one EBO
+        //       and draw each side individually, this way we can have
+        //       seperate textures for each side, and i can use GLM to modify 
+        //       the vertices in the future.
+
         float cubeVertices[] = {
-            // front
-            0.5f,  0.5f, -0.5f,  // top right
-            0.5f, -0.5f, -0.5f,  // bottom right
-            -0.5f, -0.5f, -0.5f,  // bottom left
-            -0.5f,  0.5f, -0.5f,   // top left
-
-            // right
-            0.5f, 0.5f, 0.5f, // top right
-            0.5f, -0.5f, 0.5f, // bottom right
-            0.5f, -0.5f, -0.5f, // bottom left
-            0.5f, 0.5f, -0.5f, // top left
-
-            // left
-            -0.5f, 0.5f, 0.5f, // top right
-            -0.5f, -0.5f, 0.5f, // bottom right
-            -0.5f, -0.5f, -0.5f, // bottom left
-            -0.5f, 0.5f, -0.5f, // top left
-
-            // back
-            0.5f,  0.5f, 0.5f,  // top right
-            0.5f, -0.5f, 0.5f,  // bottom right
-            -0.5f, -0.5f, 0.5f,  // bottom left
-            -0.5f,  0.5f, 0.5f,   // top left
-
-            // top
-            0.5f, 0.5f, 0.5f, // top right
-            0.5f, 0.5f, -0.5f, // bottom right
-            -0.5f, 0.5f, -0.5f, // bottom left
-            -0.5f, 0.5f, 0.5f, // top left
-
-            // bottom
-            0.5f, -0.5f, 0.5f, // top right
-            0.5f, -0.5f, -0.5f, // bottom right
-            -0.5f, -0.5f, -0.5f, // bottom left
-            -0.5f, -0.5f, 0.5f // top left
-
+            0.5f,  0.5f, -0.5f,    0.5f, 0.5f,
+            0.5f, -0.5f, -0.5f,    0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,   -0.5f, -0.5f,
+            -0.5f,  0.5f, -0.5f,   -0.5f, 0.5f
         };
-        unsigned int cubeIndices[] = {  // note that we start from 0!
-                                        // front
-            0, 1, 3,   // first triangle
-            1, 2, 3,    // second triangle
-
-            // right
-            4, 5, 7,
-            5, 6, 7,
-
-            // left
-            8, 9, 11,
-            9, 10, 11,
-
-            // back
-            12, 13, 15,
-            13, 14, 15,
-
-            // top
-            16, 17, 19,
-            17, 18, 19,
-
-            // bottom
-            20, 21, 23,
-            21, 22, 23
-
+        unsigned int cubeIndices[] = { 
+            0, 1, 3,
+            1, 2, 3,
         };
-
-        // TODO: in the future we need to make a 
-        //       class to generate these vertices and indices.
 
         this->vao.bind();
 
         this->vbo.bind();
         this->vbo.setBufferData(cubeVertices, sizeof(cubeVertices));
-        this->vbo.setAttribPointer(0, 3, 3 * sizeof(float), 0);
+        this->vbo.setAttribPointer(0, 3, 5 * sizeof(float), 0);
+        this->vbo.setAttribPointer(1, 2, 5 * sizeof(float), 3);
 
         this->ebo.bind();
         this->ebo.setBufferData(cubeIndices, sizeof(cubeIndices));

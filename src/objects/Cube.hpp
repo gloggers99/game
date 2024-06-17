@@ -10,6 +10,8 @@
 
 #include "../shaders/ShaderProgram.hpp"
 
+#include "../Texture.hpp"
+
 #include "../vo/VAO.hpp"
 #include "../vo/VBO.hpp"
 #include "../vo/EBO.hpp"
@@ -19,6 +21,13 @@ private:
     glm::mat4 transform = glm::mat4(1.0f);
     // in the future we need a global shader program generator
     ShaderProgram &shaderProgram;
+
+    Texture *topTexture;
+    Texture *bottomTexture;
+    Texture *frontTexture;
+    Texture *backTexture;
+    Texture *leftTexture;
+    Texture *rightTexture;
 
     // i feel like we can abstract gpu objects more
     VAO vao;
