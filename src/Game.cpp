@@ -10,7 +10,6 @@
 #include <GLFW/glfw3.h>
 
 #include "Scene.hpp"
-#include "shaders/ShaderFactory.hpp"
 #include "Game.hpp"
 
 void Game::error_callback(int error, const char *description) {
@@ -24,7 +23,6 @@ void Game::framebuffer_size_callback(GLFWwindow *window, int width, int height) 
 void Game::runScene(Scene *scene) {
     scene->setGame(this);
     scene->setWindow(this->window);
-    scene->setDefaultShaderProgram(this->defaultShaderProgram);
     scene->init();
     float lastFrame = 0.0f;
     while (scene->run) {
@@ -33,7 +31,6 @@ void Game::runScene(Scene *scene) {
         float currentFrame = static_cast<float>(glfwGetTime());
         scene->loop(currentFrame - lastFrame);
         lastFrame = currentFrame;
-        glfwPollEvents();
     }
 }
 
@@ -56,26 +53,7 @@ Game::Game() : window(nullptr), defaultShaderProgram(nullptr) {
     glfwSetFramebufferSizeCallback(this->window->getWindow(), Game::framebuffer_size_callback);
     glEnable(GL_DEPTH_TEST);
 
-    ShaderFactory shaderFactory;
-    shaderFactory.layout<glm::vec4>(0, LayoutType::IN, "aPos");
-    shaderFactory.layout<glm::vec2>(1, LayoutType::IN, "aTexCoord");
-    shaderFactory.out<glm::vec2>("texCoord", ShaderType::VERTEX);
-    shaderFactory.uniform<glm::mat4>("transform", ShaderType::VERTEX);
-    shaderFactory.uniform<glm::mat4>("view", ShaderType::VERTEX);
-    shaderFactory.uniform<glm::mat4>("projection", ShaderType::VERTEX);
-    shaderFactory.main(ShaderType::VERTEX, R"(
-        gl_Position = projection * view * transform * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
-        texCoord = aTexCoord;
-    )");
-
-    shaderFactory.out<glm::vec4>("fragColor", ShaderType::FRAGMENT);
-    shaderFactory.in<glm::vec2>("texCoord", ShaderType::FRAGMENT);
-    shaderFactory.uniform<sampler2D>("ourTexture", ShaderType::FRAGMENT);
-    shaderFactory.main(ShaderType::FRAGMENT, R"(
-        fragColor = texture(ourTexture, texCoord);
-    )");
-
-    this->defaultShaderProgram = shaderFactory.finalize();
+    
 }
 
 Game::~Game() {

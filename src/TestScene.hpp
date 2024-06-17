@@ -5,21 +5,17 @@
 #ifndef GAME_TESTSCENE_HPP
 #define GAME_TESTSCENE_HPP
 
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
+
 #include "Scene.hpp"
 #include "matrix/Camera.hpp"
 #include "objects/Cube.hpp"
-
-#include <cmath>
+#include "shaders/ShaderProgram.hpp"
+#include "shaders/ShaderFactory.hpp"
 
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
-
-#include <glm/vec3.hpp>
-#include <glm/geometric.hpp>
-#include <glm/glm.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 class TestScene : public Scene {
     private:
@@ -38,66 +34,62 @@ class TestScene : public Scene {
             if (glfwGetKey(this->window->getWindow(), GLFW_KEY_D) == GLFW_PRESS)
                 this->camera.move(Direction::RIGHT, cameraSpeed);
 
-            //this->camera.handleMouse(this->window);
+            this->camera.handleMouse(this->window);
         }
 
         Camera camera = Camera();
-
         float deltaTime = 0.0f;
-
         Cube *cube;
+
+        ShaderProgram *shaderProgram;
 
     protected:
         void init() override {
-            IMGUI_CHECKVERSION();
-            ImGui::CreateContext();
-            ImGuiIO &io = ImGui::GetIO();
-            io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-            io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-            io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-            ImGui_ImplGlfw_InitForOpenGL(this->window->getWindow(), true);
-            ImGui_ImplOpenGL3_Init();
+            ShaderFactory shaderFactory;
+            shaderFactory.layout<glm::vec4>(0, LayoutType::IN, "aPos");
+            shaderFactory.layout<glm::vec2>(1, LayoutType::IN, "aTexCoord");
+            shaderFactory.out<glm::vec2>("texCoord", ShaderType::VERTEX);
+            shaderFactory.uniform<glm::mat4>("transform", ShaderType::VERTEX);
+            shaderFactory.uniform<glm::mat4>("view", ShaderType::VERTEX);
+            shaderFactory.uniform<glm::mat4>("projection", ShaderType::VERTEX);
+            shaderFactory.main(ShaderType::VERTEX, R"(
+                gl_Position = projection * view * transform * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
+                texCoord = aTexCoord;
+            )");
 
+            shaderFactory.out<glm::vec4>("fragColor", ShaderType::FRAGMENT);
+            shaderFactory.in<glm::vec2>("texCoord", ShaderType::FRAGMENT);
+            shaderFactory.uniform<sampler2D>("ourTexture", ShaderType::FRAGMENT);
+            shaderFactory.main(ShaderType::FRAGMENT, R"(
+                fragColor = texture(ourTexture, texCoord);
+            )");
 
-            this->cube = new Cube(*this->defaultShaderProgram);
+            this->shaderProgram = shaderFactory.finalize();
 
+            this->cube = new Cube(*this->shaderProgram);
             //this->window->hideCursor();
         }
 
         void loop(float deltaTime) override {
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
-
-            {
-                ImGui::Begin("Hello, world!");
-                ImGui::Text("This is some useful text.");
-                ImGui::End();
-            }
-
             this->deltaTime = deltaTime;
             this->handleInput();
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            this->defaultShaderProgram->use();
+            this->shaderProgram->use();
 
-            this->defaultShaderProgram->modifyUniform("projection", this->camera.createProjectionMatrix(this->window));
-            this->defaultShaderProgram->modifyUniform("view", camera.createViewMatrix());
+            this->shaderProgram->modifyUniform("projection", this->camera.createProjectionMatrix(this->window));
+            this->shaderProgram->modifyUniform("view", camera.createViewMatrix());
 
             this->cube->draw();
 
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
             this->window->swapBuffers();
+            glfwPollEvents();
         }
 
         void end() override {
-            ImGui_ImplOpenGL3_Shutdown();
-            ImGui_ImplGlfw_Shutdown();
-            ImGui::DestroyContext();
             this->window->close();
         }
 

@@ -18,7 +18,6 @@ private:
 protected:
     Game *game{};
     Window *window{};
-    ShaderProgram *defaultShaderProgram{};
 
     virtual void init() = 0;
     virtual void loop(float deltaTime) = 0;
@@ -40,12 +39,6 @@ protected:
         return this->window;
     }
 
-    void setDefaultShaderProgram(ShaderProgram *shaderProgram) {
-        this->defaultShaderProgram = shaderProgram;
-    }
-    ShaderProgram *getDefaultShaderProgram() {
-        return this->defaultShaderProgram;
-    }
 public:
     Scene() = default;
     ~Scene() = default;
