@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(include)
+include_directories(imgui)
 add_executable(game src/main.cpp
         src/Game.cpp
         src/Game.hpp
@@ -31,5 +32,14 @@ add_executable(game src/main.cpp
         src/Texture.hpp
         src/shaders/ShaderFactory.cpp
         src/shaders/ShaderFactory.hpp
+
+        imgui/imgui.cpp
+        imgui/imgui_demo.cpp
+        imgui/imgui_draw.cpp
+        imgui/imgui_widgets.cpp
+        imgui/imgui_tables.cpp
+        imgui/backends/imgui_impl_glfw.cpp
+        imgui/backends/imgui_impl_opengl3.cpp
+        imgui/imgui.h
 )
 target_link_libraries(game glfw)

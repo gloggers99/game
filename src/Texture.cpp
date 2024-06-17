@@ -1,8 +1,5 @@
 #include "Texture.hpp"
 
-#include <GL/gl.h>
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
 #include <filesystem>
 
 #define STB_IMAGE_IMPLEMENTATION

@@ -5,7 +5,7 @@
 #ifndef GAME_VAO_HPP
 #define GAME_VAO_HPP
 
-#include "glad/gl.h"
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 class VAO {

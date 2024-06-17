@@ -5,7 +5,7 @@
 #ifndef GAME_SHADER_HPP
 #define GAME_SHADER_HPP
 
-#include "glad/gl.h"
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <string>
 

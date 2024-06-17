@@ -6,11 +6,14 @@
 #define GAME_TESTSCENE_HPP
 
 #include "Scene.hpp"
-#include "Texture.hpp"
 #include "matrix/Camera.hpp"
 #include "objects/Cube.hpp"
 
 #include <cmath>
+
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
@@ -35,7 +38,7 @@ class TestScene : public Scene {
             if (glfwGetKey(this->window->getWindow(), GLFW_KEY_D) == GLFW_PRESS)
                 this->camera.move(Direction::RIGHT, cameraSpeed);
 
-            this->camera.handleMouse(this->window);
+            //this->camera.handleMouse(this->window);
         }
 
         Camera camera = Camera();
@@ -44,16 +47,35 @@ class TestScene : public Scene {
 
         Cube *cube;
 
-        Texture texture = Texture("img/missing.jpeg");
-
     protected:
         void init() override {
+            IMGUI_CHECKVERSION();
+            ImGui::CreateContext();
+            ImGuiIO &io = ImGui::GetIO();
+            io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+            io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+            io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+            ImGui_ImplGlfw_InitForOpenGL(this->window->getWindow(), true);
+            ImGui_ImplOpenGL3_Init();
+
+
             this->cube = new Cube(*this->defaultShaderProgram);
 
-            this->window->hideCursor();
+            //this->window->hideCursor();
         }
 
         void loop(float deltaTime) override {
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            {
+                ImGui::Begin("Hello, world!");
+                ImGui::Text("This is some useful text.");
+                ImGui::End();
+            }
+
             this->deltaTime = deltaTime;
             this->handleInput();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -66,7 +88,17 @@ class TestScene : public Scene {
 
             this->cube->draw();
 
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
             this->window->swapBuffers();
+        }
+
+        void end() override {
+            ImGui_ImplOpenGL3_Shutdown();
+            ImGui_ImplGlfw_Shutdown();
+            ImGui::DestroyContext();
+            this->window->close();
         }
 
 };

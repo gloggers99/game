@@ -22,7 +22,7 @@ protected:
 
     virtual void init() = 0;
     virtual void loop(float deltaTime) = 0;
-    void end() {
+    virtual void end() {
         this->run = false;
     }
 
