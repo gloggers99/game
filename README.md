@@ -6,6 +6,8 @@
   - [Getting Started](#getting-started)
     - [The Approach](#the-approach)
     - [Writing your first scene](#writing-your-first-scene)
+  - [Basics](#basics)
+    - [Drawing a cube](#drawing-a-cube)
 <!--toc:end-->
 
 ## Why?
@@ -87,3 +89,69 @@ Rendering using opengl is out of the scope of this tutorial, the goal is to abst
 most of opengl's functionality into classes throughout Game, however im still working
 at it bit by bit. However a glfw and opengl environment is provided for you to work with,
 and advanced users can utilize the full opengl toolset with a simplified Scene like structure.
+
+## Basics
+
+### Drawing a cube
+
+```c++
+#ifndef GAME_TESTSCENE_HPP
+#define GAME_TESTSCENE_HPP
+
+#include "Scene.hpp"
+#include "Texture.hpp"
+#include "matrix/Camera.hpp"
+#include "objects/Cube.hpp"
+
+#include <cmath>
+
+#include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+class TestScene : public Scene {
+    private:
+        Camera camera = Camera();
+
+        Cube *cube;
+
+    protected:
+        void init() override {
+            /* 
+                first we have to initialize our cube object,
+                supplying it with a shader program to use.
+                This is subject to change.
+            */
+            this->cube = new Cube(*this->defaultShaderProgram);
+        }
+
+        void loop(float deltaTime) override {
+            /*
+                clear the screen and depth buffer and draw 
+                a basic background color.
+            */
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+            /*
+                load the camera's projection and view matrix,
+                this is subject to change and be simplified.
+            */
+            this->defaultShaderProgram->use();
+            this->defaultShaderProgram->modifyUniform("projection", this->camera.createProjectionMatrix(this->window));
+            this->defaultShaderProgram->modifyUniform("view", camera.createViewMatrix());
+
+            /*
+                finally draw our cube.
+            */
+            this->cube->draw();
+
+            this->window->swapBuffers();
+        }
+
+};
+
+#endif //GAME_TESTSCENE_HPP
+```

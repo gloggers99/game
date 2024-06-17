@@ -76,52 +76,6 @@ Game::Game() : window(nullptr), defaultShaderProgram(nullptr) {
     )");
 
     this->defaultShaderProgram = shaderFactory.finalize();
-
-    // default shader program
-    /*
-    std::string vertexSource = R"glsl(
-        #version 330 core
-        layout (location = 0) in vec4 aPos;
-        layout (location = 1) in vec2 aTexCoord;
-
-        out vec2 TexCoord;
-
-        uniform mat4 transform = mat4(1.0f);
-        uniform mat4 view;
-        uniform mat4 projection;
-
-        void main()
-        {
-            gl_Position = projection * view * transform * vec4(aPos.x, aPos.y, aPos.z, 1.0f);
-            TexCoord = aTexCoord;
-            //gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);
-        }
-    )glsl";
-
-    Shader vertexShader = Shader(GL_VERTEX_SHADER, vertexSource);
-    vertexShader.compileShader();
-
-    std::string fragmentSource = R"glsl(
-        #version 330 core
-        out vec4 FragColor;
-
-        in vec2 TexCoord;
-
-        uniform sampler2D ourTexture;
-
-        void main()
-        {
-            //FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-            FragColor = texture(ourTexture, TexCoord);
-        }
-    )glsl";
-    Shader fragmentShader = Shader(GL_FRAGMENT_SHADER, fragmentSource);
-    fragmentShader.compileShader();
-
-    this->defaultShaderProgram->attachShader(vertexShader);
-    this->defaultShaderProgram->attachShader(fragmentShader);
-    this->defaultShaderProgram->link();
-    */
 }
 
 Game::~Game() {

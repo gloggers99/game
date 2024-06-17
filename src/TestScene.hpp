@@ -9,8 +9,9 @@
 #include "Texture.hpp"
 #include "matrix/Camera.hpp"
 #include "objects/Cube.hpp"
-#include <GL/gl.h>
+
 #include <cmath>
+
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include <glm/glm.hpp>
@@ -23,7 +24,7 @@ class TestScene : public Scene {
             if (glfwGetKey(this->window->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
                 glfwSetInputMode(this->window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-            const float cameraSpeed = 2.5f * this->deltaTime; // adjust accordingly
+            const float cameraSpeed = 2.5f * this->deltaTime;
 
             if (glfwGetKey(this->window->getWindow(), GLFW_KEY_W) == GLFW_PRESS)
                 this->camera.move(Direction::FORWARD, cameraSpeed);
@@ -66,7 +67,6 @@ class TestScene : public Scene {
             this->cube->draw();
 
             this->window->swapBuffers();
-            glfwPollEvents();
         }
 
 };
