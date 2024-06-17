@@ -50,6 +50,7 @@ void Cube::draw() {
             * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f)));
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     this->shaderProgram.modifyUniform("transform", glm::mat4(1.0f));
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     this->vao.unbind();
 }
@@ -60,6 +61,44 @@ void Cube::translate(glm::vec3 translation) {
 
 void Cube::scale(glm::vec3 scale) {
     this->transform = glm::scale(this->transform, scale);
+}
+
+void Cube::setTexture(Texture *texture) {
+    this->topTexture = texture;
+    this->bottomTexture = texture;
+    this->frontTexture = texture;
+    this->backTexture = texture;
+    this->leftTexture = texture;
+    this->rightTexture = texture;
+}
+
+void Cube::setTexture(Texture *texture, Face face) {
+    switch (face) {
+        case Face::TOPFACE:
+            this->topTexture = texture;
+            break;
+        case Face::BOTTOMFACE:
+            this->bottomTexture = texture;
+            break;
+        case Face::FRONTFACE:
+            this->frontTexture = texture;
+            break;
+        case Face::BACKFACE:
+            this->backTexture = texture;
+            break;
+        case Face::LEFTFACE:
+            this->leftTexture = texture;
+            break;
+        case Face::RIGHTFACE:
+            this->rightTexture = texture;
+            break;
+    }
+}
+
+void Cube::setTexture(std::map<Texture*, Face> textures) {
+    for (auto &texture : textures) {
+        this->setTexture(texture.first, texture.second);
+    }
 }
 
 Cube::Cube(ShaderProgram &shaderProgram) 

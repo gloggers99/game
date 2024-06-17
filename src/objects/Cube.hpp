@@ -7,6 +7,7 @@
 //   uniforms are needed. This way, the shader can be generated at runtime.
 
 #include <glm/fwd.hpp>
+#include <map>
 
 #include "../shaders/ShaderProgram.hpp"
 
@@ -15,6 +16,15 @@
 #include "../vo/VAO.hpp"
 #include "../vo/VBO.hpp"
 #include "../vo/EBO.hpp"
+
+enum Face {
+    FRONTFACE,
+    BACKFACE,
+    LEFTFACE,
+    RIGHTFACE,
+    TOPFACE,
+    BOTTOMFACE
+};
 
 class Cube {
 private:
@@ -39,6 +49,10 @@ public:
 
     void translate(glm::vec3 translation);
     void scale(glm::vec3 scale);
+
+    void setTexture(Texture *texture); // set all sides to the same texture
+    void setTexture(Texture *texture, Face face); // set a specific side to a texture
+    void setTexture(std::map<Texture*, Face> textures); // set multiple sides to different textures
 
     Cube(ShaderProgram &shaderProgram);
     ~Cube();

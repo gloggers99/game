@@ -111,7 +111,8 @@ class TestScene : public Scene {
             this->vao.unbind();
 
             this->cube = new Cube(this->shaderProgram);
-            this->cube->translate(glm::vec3(0.0f, 5.0f, 0.0f));
+            this->cube->translate(glm::vec3(0.0f, 1.0f, 0.0f));
+            this->cube->setTexture({{new Texture("img/wall.jpg"), FRONTFACE}});
 
             this->window->hideCursor();
         }
