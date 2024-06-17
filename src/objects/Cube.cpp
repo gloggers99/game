@@ -94,12 +94,13 @@ Cube::Cube(ShaderProgram &shaderProgram)
         //       class to generate these vertices and indices.
 
         this->vao.bind();
+
         this->vbo.bind();
         this->vbo.setBufferData(cubeVertices, sizeof(cubeVertices));
+        this->vbo.setAttribPointer(0, 3, 3 * sizeof(float), 0);
 
         this->ebo.bind();
         this->ebo.setBufferData(cubeIndices, sizeof(cubeIndices));
-        this->vbo.setAttribPointer(0, 3,  3 * sizeof(float), 0);
 
         this->vao.unbind();
     }

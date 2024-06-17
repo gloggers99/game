@@ -51,7 +51,7 @@ Game::Game() : window(nullptr) {
 
     glViewport(0, 0, 640, 480);
     glfwSetFramebufferSizeCallback(this->window->getWindow(), Game::framebuffer_size_callback);
-
+    glEnable(GL_DEPTH_TEST);
 }
 
 Game::~Game() {
